@@ -34,7 +34,7 @@ for x in lists:
     #Create a list of length len(x), which stores the amount of overlap between the rules applied to a key, and each value in the list
     #
     # Intuition : If there is a single solution to each update, the value with the most overlap between its ruleset and the "update" line must be the first in the solution
-    # Then, delete the value with the most overlap and go through each element in the list.
+    # Then, delete the value with the most overlap and go through each element in the list
     #
     #
     for i in x:
