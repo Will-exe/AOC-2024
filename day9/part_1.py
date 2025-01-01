@@ -20,7 +20,6 @@ if (k:= len(vals) - len(empty) > 0):
 result = []
 
 for i, val in vals:
-    #print(i, val, empty[i])
     result.extend([i] * val)
     result.extend(['.'] * empty[i])
 
