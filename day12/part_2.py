@@ -1,6 +1,6 @@
 from functools import *
 
-with open('pinput.txt', 'r') as file:
+with open('input.txt', 'r') as file:
     grid = file.read().strip().split('\n')
 
 rLen = len(grid)
@@ -33,18 +33,50 @@ def findOutsideCorners(region):
     corners = 0
     for char, r, c in region:
         if (numAdj := checkAdjacentFences(char, r, c)) == 2:
-            corners += 1
+            vDirs = {
+                "up": (r - 1, c),
+                "down": (r + 1, c),
+            }
+            hDirs = {
+                "left": (r, c - 1),
+                "right": (r, c + 1),
+            }
+            numAdjacents = 0
+            #print("Location: ", (r,c))
+            for dir, (r1, c1) in vDirs.items():
+                if 0 <= r1 < rLen and 0 <= c1 < cLen:
+                    numAdjacents += (char != grid[r1][c1])
+                    #print(char, grid[r1][c1], (r1,c1))
+                    #print(char != grid[r][c])
+                    #print(numAdjacents)
+                else:
+                    numAdjacents += 1
+            #print("Num adj vert: ", numAdjacents)
+            if numAdjacents == 2:
+                continue
+            numAdjacents = 0
+            for dir, (r, c) in hDirs.items():
+                if 0 <= r < rLen and 0 <= c < cLen:
+                    numAdjacents += (char != grid[r][c])
+                else:
+                    numAdjacents += 1
+            #print("Num adj horz: ", numAdjacents)
+            if numAdjacents == 2:
+                continue
+            else:
+                corners += 1
         elif numAdj == 3:
             corners += 2
         elif numAdj == 4:
             corners += 4
     return corners
 
+
 def findInsideCorners(region):
     #Find blocks of 4
     #Make blocks in dirs
     #Save blocks into list of visited blocks
-    visited = []
+    visited = set()
     
     corners = 0
     for char, r, c in region:
@@ -54,27 +86,28 @@ def findInsideCorners(region):
         "downleft": ((r + 1, c - 1), (r + 1, c), (r, c - 1), (r, c)),
         "downright": ((r + 1, c + 1), (r + 1, c), (r, c + 1), (r, c)),
         }
-        for dir, (r2, c2) in dirs.items():
-            if any((row == r2 and col == c2) for _, row, col in region):
-                if checkAdjacentFences(char, r, c) > 0 and checkAdjacentFences(char, r2, c2) > 0:
-                    nDirs = {
-                        "up": (r2 - 1, c2),
-                        "down": (r2 + 1, c2),
-                        "left": (r2, c2 - 1),
-                        "right": (r2, c2 + 1),
-                    }
-                    if dir == "upleft":
-                        notUp = any
-                    elif dir == "upright":
-                    elif dir == "downleft":
-                    elif dir == "downright":
+        for dir, locs in dirs.items():
+            locs = tuple(sorted(locs))
+            if locs in visited:
+                continue
+            else:
+                #print()
+                #print("Center: ", (r,c))
+                #print(locs)
+                isChar = 0
+                for (r, c) in locs:
+                    if any(row == r and col == c for _, row, col in region):
+                        isChar += 1
+                        #print(char,r,c)
+                        #print(isChar)
+                if isChar == 3:
                     corners += 1
-                    index = region.index((char, r2, c2))
-                    visited[index] == True
+                visited.add(locs)
 
     return corners
 
 def countSides(region):
+    #didnt work
     sides = 0
 
     miR = min(region, key=lambda x: x[1])
@@ -146,7 +179,8 @@ for region in regions:
         cResults[1] += 1
     iCorners = findInsideCorners(region)
     oCorners = findOutsideCorners(region)
-    print(region[0][0], " sides: ", iCorners + oCorners)
+    #print(region[0][0], " inside corners: ", iCorners)
+    #print(region[0][0], " outside corners: ", oCorners)
     cResults[2] = iCorners + oCorners
     results.append(cResults)
 
