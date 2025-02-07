@@ -18,7 +18,7 @@ with open('input.txt', 'r') as file:
 
 for match in pattern.finditer(txt):
     Ax, Ay, Bx, By, Lx, Ly = map(int, match.groups())
-    data.append([[Ax,Ay],[Bx,By],[Lx+10000000000000,Ly+10000000000000]])
+    data.append([[Ax,Ay],[Bx,By],[Lx,Ly]])
 
 sols = []
 
