@@ -30,14 +30,40 @@ i = 1
 while bla != True:
     grid = [['.' for _ in range(101)] for _ in range(103)]
     updateGrid(i)
+    flatGrid = [val for row in grid for val in row]
 
-    for line in grid:
-        for char in line:
-            print(char, end='')
-    print()
-    print(i)
-    i += 1
-    input("Please press any key...")
+    flag = False
+    prec = 0
+    preVal = None
+    for val in flatGrid:
+        #print("val: ", val)
+        #print("preVal: ", preVal)
+        #print(prec)
+        if val == '.':
+            prec = 0
+            continue
+        else:
+            if preVal == None:
+                preVal = val
+            if val == preVal:
+                prec += 1
+            else:
+                preVal = val
+                prec = 0
+            if prec >= 10:
+                flag = True
+
+    if flag == True:
+        for line in grid:
+            for char in line:
+                print(char, end='')
+            print()
+        print(i)
+        i += 1
+        input("Please press any key...")
+    else:
+        i += 1
+        
 
 
 """
